@@ -2,17 +2,18 @@ function [] = huffmantree(p)
 % HUFFMANTREE(P)
 % Generates a Huffman tree for the probabilities in vector P.
 
-% Samuel Johnson
-% 10/03/2016
-
-start_num_p = length(p);
+if nargin < 1
+   print_usage();
+   return
+end
 
 if sum(p) < 1-eps()
     disp('Error: Probabilities in P do not add to 1');
     return
 end
 
-if start_num_p <= 2
+input_num_probabilities = length(p);
+if length(p) <= 2
     disp('More probabilities please');
     return
 end
@@ -22,24 +23,24 @@ BASE_HEIGHT = 10;
 X_TEXT_SPACING = 10;
 Y_TEXT_SPACING = 10;
 
-p = sort(p, 'ascend');
+probabilities = sort(p, 'ascend');
 y = BASE_HEIGHT;
 nodeID = 0;
 
 % Create starting nodes
-for i = 1:start_num_p
+for i = 1:length(p)
     nodeID = nodeID + 1;
-    pobj(i) = probclass(nodeID, BASE_DEPTH, y, p(i), 1);   
+    pobj(i) = probclass(nodeID, BASE_DEPTH, y, probabilities(i), 1);   
     y = y + Y_TEXT_SPACING;
 end
 
-prob = 0;
+node_prob = 0;
 index_ignore = [];
 branches = [];
 largest_branch_level = 1;
 
 % Loop while the node prob is < 1 (while we are not at the base branch)
-while prob < 1
+while node_prob < 1
     num_p = length(pobj);
     
     % Finding the lowest p
@@ -98,8 +99,8 @@ while prob < 1
     nodeID = nodeID + 1;
     x = X_TEXT_SPACING*branch_level;
     y = (pobj(lowestp_index).y + pobj(branch_lowestp_index).y)/2;
-    prob = pobj(lowestp_index).p + pobj(branch_lowestp_index).p;
-    new_node = probclass(nodeID, x, y, prob, branch_level);
+    node_prob = pobj(lowestp_index).p + pobj(branch_lowestp_index).p;
+    new_node = probclass(nodeID, x, y, node_prob, branch_level);
     
     % add it to the list of nodes
     pobj = [new_node, pobj(1:lowestp_index), pobj(lowestp_index+1:end)];
@@ -108,13 +109,13 @@ while prob < 1
 %     fprintf('lowestp: %.4f\nlowestp_index: %.4f\nbranch_lowestp: %.4f\nbranch_lowestp_index: %.4f\n\n',...
 %         lowestp, lowestp_index, branch_lowestp, branch_lowestp_index);
 
-end % end while()
+end
 
 % Draw the tree
 close all;
 fig_handle = figure;
-axis([0, X_TEXT_SPACING*(largest_branch_level+1),...
-      0, Y_TEXT_SPACING*(start_num_p+1)]);
+axis([0, X_TEXT_SPACING*(largest_branch_level + 1),...
+      0, Y_TEXT_SPACING*(input_num_probabilities + 1)]);
 %set(fig_handle, 'Visible', 'off');
 set(gca, 'xtick', [], 'ytick', []);
 set(fig_handle, 'position', [230, 210, 1200, 720]);
@@ -129,34 +130,14 @@ for i = 1:length(branches)
    branches(i).draw(fig_handle); 
 end
 
-axis off;
+% White background fill
 set(fig_handle, 'Color', [1, 1, 1]);
+axis off;
 
 end
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+function print_usage
+    fprintf('HUFFMANTREE(P)\n');
+    fprintf('Generates a Huffman tree for the probabilities in vector P\n');
+end
 
