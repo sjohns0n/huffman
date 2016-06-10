@@ -12,3 +12,18 @@ Options:
 	p	List of probabilities for each alphabet element
 
 ```
+
+##Examples
+```
+p = [0.25, 0.25, 0.25, 0.25];
+huffmantree(p)
+```
+
+![huffman example B](images/huffmana.png)
+
+```
+p = [0.125, 0.125, 0.25, 0.5];
+huffmantree(p)
+```
+
+![huffman example A](images/huffmanb.png)
